@@ -2,6 +2,7 @@ bits 16
 org 0x7C00
 
 start:
+    mov [boot_drive], dl
     mov ax, 0x0003
     int 0x10
     cli
@@ -21,7 +22,7 @@ start:
     mov ch, 0             ; Цилиндр 0
     mov cl, 2             ; Сектор 2
     mov dh, 0             ; Головка 0
-    mov dl, 0x00          ; Первая дискета
+    mov dl, [boot_drive]  ; Диск
     int 0x13
     jc .error
 
@@ -95,5 +96,6 @@ gdt_desc:
     dd gdt_start
 err db "Err.", 0x0D, 0x0A, 0x00
 kmsg db "loading kernel...", 0x0D, 0x0A, 0x00
+boot_drive db 0
 times 510 - ($ - $$) db 0
 dw 0xAA55
